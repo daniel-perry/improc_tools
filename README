@@ -1,1 +1,10 @@
 Collection of simple improc tools.
+
+staple - performs staple algorithm on a set of nrrds
+thresholdimage - thresholds a nrrd to a specific value
+dice - performs a dice similarity coefficient comparison between two nrrds 
+xoroverlap - performs an xor overlap comparison between two nrrds
+
+compress - rewrites a nrrd as a compressed nrrd.
+data_to_mask - rewrites a nrrd from float data-type to unsigned char data-type
+
