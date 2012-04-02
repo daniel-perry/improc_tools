@@ -40,7 +40,7 @@
 #include <itkImageFileWriter.h>
 
 template < class ImageType >
-void runStaple(const std::vector<typename ImageType::Pointer> & images, const std::string & outname)
+void runStaple(const std::vector<typename ImageType::Pointer> & images, const std::string & outname, bool round_robin)
 {
     size_t ignoreSlices = 0;
     // bounding box ImageType
@@ -369,6 +369,8 @@ void runStaple(const std::vector<typename ImageType::Pointer> & images, const st
       std::cout << "overallsensitivity" << i << "," << filter->GetSensitivity(i) << std::endl;
     }
     std::cout << std::endl;
+
+    if (!round_robin) return; // all done if no round robin comparison required...
 
     // now re-run in a round-robin fashion:
 

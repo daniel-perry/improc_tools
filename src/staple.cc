@@ -42,7 +42,8 @@ int main(int argc, char ** argv)
 
   if( argc < 3 )
   {
-    std::cerr << "usage: " << argv[0] << " image1.nrrd image2.nrrd [image3.nrrd ...] mask.nrrd outimage.nrrd" << std::endl;
+    std::cerr << "usage: " << argv[0] << " [-rr] image1.nrrd image2.nrrd [image3.nrrd ...] mask.nrrd outimage.nrrd" << std::endl;
+    std::cerr << "options: -rr = run round robin comparison on inputs" << std::endl;
     return 1;
   }
   
@@ -54,7 +55,16 @@ int main(int argc, char ** argv)
   // read in the images...
   std::vector<InputImageType::Pointer> images;
 
-  for( int i=1; i<argc-1; ++i )
+  size_t image_index = 1;
+  bool round_robin = false;
+  std::string option(argv[1]);
+  if( option == "-rr" )
+  {
+    ++image_index;
+    round_robin = true;
+  }
+
+  for( int i=image_index; i<argc-1; ++i )
   {
     ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileName( argv[i] );
@@ -78,7 +88,7 @@ int main(int argc, char ** argv)
 
 
   // run the staple algorithm with comparisons...
-  runStaple<InputImageType>( images, outname ); 
+  runStaple<InputImageType>( images, outname, round_robin ); 
 
   return 0;
 }
