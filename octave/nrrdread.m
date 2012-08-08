@@ -14,6 +14,16 @@ function [X, meta] = nrrdread(filename)
 
 % Copyright 2012 The MathWorks, Inc.
 
+%
+%  this is originally from:
+%  http://www.mathworks.com/matlabcentral/fileexchange/34653-nrrd-format-file-reader/content/nrrdread.m
+%  I had to grab this from google cache from 3 Aug 2012, for some reason the mathworks
+%  site said the page didn't exist after that?  Maybe it was temporary downtime,
+%  seems handy so i'm keeping this copy of it.
+%  
+%  Note: if you want full support, compile the mex nrrd interface (see teem source
+%        for details).
+%
 
 % Open file.
 fid = fopen(filename, 'rb');
