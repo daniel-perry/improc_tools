@@ -98,7 +98,13 @@ data = adjustEndian(data, meta);
 
 % Reshape and get into MATLAB's order.
 X = reshape(data, dims');
-X = permute(X, [2 1 3]);
+if (ndims == 3)
+    X = permute(X, [2 1 3]);
+elseif (ndims == 4)
+    X = permute(X, [2 3 4 1]);
+else
+    error('%s dimensions not yet supported.',ndims);
+end
 
 
 
