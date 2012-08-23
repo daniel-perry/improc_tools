@@ -29,6 +29,8 @@
 PROJECT( improc_tools )
 cmake_minimum_required(VERSION 2.8)  
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake/Modules/")
+
 #Match everything when analyzing dependencies
 INCLUDE_REGULAR_EXPRESSION("^.*$")
 OPTION (BUILD_SHARED_LIBS "Build shared libraries" OFF)
@@ -41,7 +43,18 @@ ENDIF (WIN32 AND MSVC)
 FIND_PACKAGE(ITK REQUIRED)
 IF (ITK_FOUND)
   INCLUDE (${USE_ITK_FILE})
+ELSE(ITK_FOUND)
+  MESSAGE(STATUS "WARNING: ITK not found")
 ENDIF(ITK_FOUND)
+
+FIND_PACKAGE(Silo REQUIRED)
+IF(Silo_FOUND)
+  INCLUDE_DIRECTORIES(${Silo_INCLUDE_DIR})
+  LINK_DIRECTORIES(${Silo_LIBRARY_DIR})
+ELSE(Silo_FOUND)
+  MESSAGE(STATUS "WARNING: Silo not found")
+ENDIF(Silo_FOUND)
+
 
 #FIND_PACKAGE(VTK REQUIRED)
 #IF (VTK_FOUND)
@@ -50,12 +63,72 @@ ENDIF(ITK_FOUND)
 
 #find_package(OpenCV REQUIRED)
 
-#FIND_PACKAGE(Boost REQUIRED)
-#link_directories ( ${Boost_LIBRARY_DIRS} )
-#include_directories ( ${Boost_INCLUDE_DIRS} )
+FIND_PACKAGE(Boost REQUIRED)
+IF(BOOST_FOUND)
+  INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIRS} )
+  LINK_DIRECTORIES( ${Boost_LIBRARY_DIRS} )
+ENDIF(BOOST_FOUND)
 
 
 SET(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+##########################################################################
+# silo
+##########################################################################
+
+SET( silo_SRCS
+     silo.cc
+)
+
+#SET ( silo_HDRS
+#     silo.h
+#)
+
+
+ADD_EXECUTABLE( silotest
+                ${silo_SRCS}
+#                ${silo_HDRS}
+				      )
+
+#TARGET_LINK_LIBRARIES( silo ITKAlgorithms
+#                        ITKBasicFilters 
+#                        ITKIO ITKNumerics ITKCommon 
+#                     ) 
+TARGET_LINK_LIBRARIES( silotest
+                       silo
+                       #${ITK_LIBRARIES}
+                     ) 
+
+
+
+##########################################################################
+# nrrd2silo
+##########################################################################
+
+SET( nrrd2silo_SRCS
+     nrrd2silo.cc
+)
+
+#SET ( nrrd2silo_HDRS
+#     nrrd2silo.h
+#)
+
+
+ADD_EXECUTABLE( nrrd2silo 
+                ${nrrd2silo_SRCS}
+#                ${nrrd2silo_HDRS}
+				      )
+
+TARGET_LINK_LIBRARIES( nrrd2silo 
+                        silo
+                        #ITKAlgorithms
+                        #ITKBasicFilters 
+                        #ITKIONRRD 
+                        #ITKNrrdIO
+                        #ITKNumerics 
+                        #ITKCommon 
+                        ${ITK_LIBRARIES}
+                     ) 
 
 ##########################################################################
 # Staple
@@ -75,10 +148,14 @@ ADD_EXECUTABLE( staple
                 ${STAPLE_HDRS}
 				      )
 
-TARGET_LINK_LIBRARIES( staple ITKAlgorithms
-                        ITKBasicFilters 
-                        ITKIO ITKNumerics ITKCommon 
+#TARGET_LINK_LIBRARIES( staple ITKAlgorithms
+#                        ITKBasicFilters 
+#                        ITKIO ITKNumerics ITKCommon 
+#                     ) 
+TARGET_LINK_LIBRARIES( staple 
+                       ${ITK_LIBRARIES}
                      ) 
+
 
 ##########################################################################
 # Dice Similarity Coefficient (DSC)
@@ -97,10 +174,14 @@ ADD_EXECUTABLE( dice
                 #${dice_HDRS}
 				      )
 
-TARGET_LINK_LIBRARIES( dice ITKAlgorithms
-                        ITKBasicFilters 
-                        ITKIO ITKNumerics ITKCommon 
+#TARGET_LINK_LIBRARIES( dice ITKAlgorithms
+#                        ITKBasicFilters 
+#                        ITKIO ITKNumerics ITKCommon 
+#                     ) 
+TARGET_LINK_LIBRARIES( dice 
+                       ${ITK_LIBRARIES}
                      ) 
+
 
 ##########################################################################
 # XOR Overlap 
@@ -119,10 +200,14 @@ ADD_EXECUTABLE( xoroverlap
                 #${xoroverlap_HDRS}
 				      )
 
-TARGET_LINK_LIBRARIES( xoroverlap ITKAlgorithms
-                        ITKBasicFilters 
-                        ITKIO ITKNumerics ITKCommon 
+#TARGET_LINK_LIBRARIES( xoroverlap ITKAlgorithms
+#                        ITKBasicFilters 
+#                        ITKIO ITKNumerics ITKCommon 
+#                     ) 
+TARGET_LINK_LIBRARIES( xoroverlap 
+                       ${ITK_LIBRARIES}
                      ) 
+
 
  
 ##########################################################################
@@ -138,10 +223,14 @@ ADD_EXECUTABLE( compress
                 ${compress_SRCS}
 				      )
 
-TARGET_LINK_LIBRARIES( compress ITKAlgorithms
-                        ITKBasicFilters 
-                        ITKIO ITKNumerics ITKCommon 
+#TARGET_LINK_LIBRARIES( compress ITKAlgorithms
+#                        ITKBasicFilters 
+#                        ITKIO ITKNumerics ITKCommon 
+#                     ) 
+TARGET_LINK_LIBRARIES( compress 
+                       ${ITK_LIBRARIES}
                      ) 
+
 
 ##########################################################################
 # data_to_mask
@@ -156,9 +245,11 @@ ADD_EXECUTABLE( data_to_mask
                 ${DATA_TO_MASK_SRCS}
 				      )
 
-TARGET_LINK_LIBRARIES( data_to_mask ITKAlgorithms
-                        ITKBasicFilters 
-                        ITKIO ITKNumerics ITKCommon
+#TARGET_LINK_LIBRARIES( data_to_mask ITKAlgorithms
+#                        ITKBasicFilters 
+#                        ITKIO ITKNumerics ITKCommon
+TARGET_LINK_LIBRARIES( data_to_mask 
+                       ${ITK_LIBRARIES}
                      ) 
 
 ##########################################################################
@@ -174,9 +265,11 @@ ADD_EXECUTABLE( thresholdimage
                 ${THRESHOLD_SRCS}
 				      )
 
-TARGET_LINK_LIBRARIES( thresholdimage ITKAlgorithms
-                        ITKBasicFilters 
-                        ITKIO ITKNumerics ITKCommon 
+#TARGET_LINK_LIBRARIES( thresholdimage ITKAlgorithms
+#                        ITKBasicFilters 
+#                        ITKIO ITKNumerics ITKCommon 
+TARGET_LINK_LIBRARIES( thresholdimage 
+                       ${ITK_LIBRARIES}
                      ) 
 
 
