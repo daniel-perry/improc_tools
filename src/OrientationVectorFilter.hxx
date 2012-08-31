@@ -23,8 +23,8 @@
 
 */
 
-#ifndef STRUCTURETENSORFILTER_HXX
-#define STRUCTURETENSORFILTER_HXX
+#ifndef ORIENTATIONVECTORFILTER_HXX
+#define ORIENTATIONVECTORFILTER_HXX
 
 // itk
 #include <itkGradientImageFilter.h>
@@ -33,21 +33,21 @@
 #include <itkNthElementImageAdaptor.h>
 
 template< class TInputImage, class TOperatorValueType, class TOutputValueType , class TOutputImageType >
-StructureTensorFilter< TInputImage, TOperatorValueType, TOutputValueType, TOutputImageType >
-::StructureTensorFilter()
+OrientationVectorFilter< TInputImage, TOperatorValueType, TOutputValueType, TOutputImageType >
+::OrientationVectorFilter()
 :m_Sigma(1.f),
 m_SigmaOuter(1.f)
 {
 }
 
 template< class TInputImage, class TOperatorValueType, class TOutputValueType , class TOutputImageType >
-StructureTensorFilter< TInputImage, TOperatorValueType, TOutputValueType, TOutputImageType >
-::~StructureTensorFilter()
+OrientationVectorFilter< TInputImage, TOperatorValueType, TOutputValueType, TOutputImageType >
+::~OrientationVectorFilter()
 {}
 
 template< class TInputImage, class TOperatorValueType, class TOutputValueType , class TOutputImageType >
 void 
-StructureTensorFilter< TInputImage, TOperatorValueType, TOutputValueType, TOutputImageType >
+OrientationVectorFilter< TInputImage, TOperatorValueType, TOutputValueType, TOutputImageType >
 ::PrintSelf(std::ostream& os, itk::Indent indent) const
 {
   Superclass::PrintSelf(os,indent);
@@ -56,12 +56,12 @@ StructureTensorFilter< TInputImage, TOperatorValueType, TOutputValueType, TOutpu
 
 template< class TInputImage, class TOperatorValueType, class TOutputValueType , class TOutputImageType >
 void
-StructureTensorFilter< TInputImage, TOperatorValueType, TOutputValueType, TOutputImageType >
+OrientationVectorFilter< TInputImage, TOperatorValueType, TOutputValueType, TOutputImageType >
 ::ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
                        itk::ThreadIdType threadId)
 //template< class TInputImage, class TOperatorValueType, class TOutputValueType , class TOutputImageType >
 //void
-//StructureTensorFilter< TInputImage, TOperatorValueType, TOutputValueType, TOutputImageType >
+//OrientationVectorFilter< TInputImage, TOperatorValueType, TOutputValueType, TOutputImageType >
 //::GenerateData()
 {
   /* types */

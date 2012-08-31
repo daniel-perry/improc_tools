@@ -23,8 +23,8 @@
 
 */
 
-#ifndef STRUCTURETENSORFILTER_H
-#define STRUCTURETENSORFILTER_H
+#ifndef ORIENTATIONVECTORFILTER_H
+#define OREINTATIONVECTORFILTER_H
 
 // itk
 #include <itkImage.h> 
@@ -34,10 +34,9 @@
 #include <itkCovariantVector.h>
 
 
-
-/** StructureTensorFilter
+/** OrientationVectorFilter
  *    Computer structure tensor for each component of the image.
- *    Output will be an image of tensor vectors.
+ *    Output will be an image of direction vectors from the tensor.
  */
 template< class TInputImage,
           class TOperatorValue = float,
@@ -45,7 +44,7 @@ template< class TInputImage,
           class TOutputImage = itk::Image< itk::CovariantVector< TOutputValue,
                                                                  TInputImage::ImageDimension >,
                                            TInputImage::ImageDimension > >
-class StructureTensorFilter: public itk::ImageToImageFilter< TInputImage, TOutputImage >
+class OrientationVectorFilter: public itk::ImageToImageFilter< TInputImage, TOutputImage >
 {
 public:
   /** types */
@@ -60,14 +59,14 @@ public:
   typedef typename itk::CovariantVector<OutputValueType,OutputImageType::ImageDimension> CovariantVectorType;
   typedef typename OutputImageType::RegionType OutputImageRegionType;
 
-  typedef StructureTensorFilter             Self;
+  typedef OrientationVectorFilter             Self;
   typedef typename itk::ImageToImageFilter<InputImageType,OutputImageType> Superclass;
   typedef typename itk::SmartPointer<Self>                                  Pointer;
   typedef typename itk::SmartPointer<const Self>                            ConstPointer;
 
   itkNewMacro(Self);
 
-  itkTypeMacro(StructureTensorFilter,  ImageToImageFilter);
+  itkTypeMacro(OrientationVectorFilter,  ImageToImageFilter);
 
   void SetSigma(float sigma){ m_Sigma=sigma; }
   float GetSigma(){ return m_Sigma; }
@@ -76,8 +75,8 @@ public:
 
   
 protected:
-  StructureTensorFilter();
-  virtual ~StructureTensorFilter();
+  OrientationVectorFilter();
+  virtual ~OrientationVectorFilter();
   void PrintSelf(std::ostream& os, itk::Indent indent) const;
   //virtual void GenerateData();
   virtual void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
@@ -90,6 +89,6 @@ private:
 };
 
 // definitions:
-#include "StructureTensorFilter.hxx"
+#include "OrientationVectorFilter.hxx"
 
 #endif
