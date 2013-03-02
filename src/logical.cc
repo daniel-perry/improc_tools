@@ -124,7 +124,7 @@ int main(int argc, char ** argv)
   {
     reader = ReaderType::New();
     reader->SetFileName( input2fn );
-    ImageType::Pointer input2 = reader->GetOutput();
+    input2 = reader->GetOutput();
     try
     {
       reader->Update();
@@ -132,6 +132,11 @@ int main(int argc, char ** argv)
     catch(itk::ExceptionObject e)
     {
       std::cerr << "Error reading file " << input2fn << ": " << e << std::endl;
+      return 1;
+    }
+    if( input1->GetLargestPossibleRegion().GetSize() != input2->GetLargestPossibleRegion().GetSize() )
+    {
+      std::cerr << "Error volumes must be equal size" << std::endl;
       return 1;
     }
   }
