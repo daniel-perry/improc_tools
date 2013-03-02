@@ -2,6 +2,7 @@ Collection of simple improc tools.
 
 staple - performs staple algorithm on a set of nrrds
 thresholdimage - thresholds a nrrd to a specific value
+logical - perform logical operations between two mask files
 dice - performs a dice similarity coefficient comparison between two nrrds 
 xoroverlap - performs an xor overlap comparison between two nrrds
 
