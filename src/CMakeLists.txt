@@ -47,13 +47,13 @@ ELSE(ITK_FOUND)
   MESSAGE(STATUS "WARNING: ITK not found")
 ENDIF(ITK_FOUND)
 
-FIND_PACKAGE(Silo REQUIRED)
-IF(Silo_FOUND)
-  INCLUDE_DIRECTORIES(${Silo_INCLUDE_DIR})
-  LINK_DIRECTORIES(${Silo_LIBRARY_DIR})
-ELSE(Silo_FOUND)
-  MESSAGE(STATUS "WARNING: Silo not found")
-ENDIF(Silo_FOUND)
+#FIND_PACKAGE(Silo REQUIRED)
+#IF(Silo_FOUND)
+#  INCLUDE_DIRECTORIES(${Silo_INCLUDE_DIR})
+#  LINK_DIRECTORIES(${Silo_LIBRARY_DIR})
+#ELSE(Silo_FOUND)
+#  MESSAGE(STATUS "WARNING: Silo not found")
+#ENDIF(Silo_FOUND)
 
 
 #FIND_PACKAGE(VTK REQUIRED)
@@ -76,60 +76,60 @@ SET(CMAKE_INCLUDE_CURRENT_DIR ON)
 # silo
 ##########################################################################
 
-SET( silo_SRCS
-     silo.cc
-)
-
-#SET ( silo_HDRS
-#     silo.h
+#SET( silo_SRCS
+#     silo.cc
 #)
-
-
-ADD_EXECUTABLE( silotest
-                ${silo_SRCS}
-#                ${silo_HDRS}
-				      )
-
-#TARGET_LINK_LIBRARIES( silo ITKAlgorithms
-#                        ITKBasicFilters 
-#                        ITKIO ITKNumerics ITKCommon 
+#
+##SET ( silo_HDRS
+##     silo.h
+##)
+#
+#
+#ADD_EXECUTABLE( silotest
+#                ${silo_SRCS}
+##                ${silo_HDRS}
+#				      )
+#
+##TARGET_LINK_LIBRARIES( silo ITKAlgorithms
+##                        ITKBasicFilters 
+##                        ITKIO ITKNumerics ITKCommon 
+##                     ) 
+#TARGET_LINK_LIBRARIES( silotest
+#                       silo
+#                       #${ITK_LIBRARIES}
 #                     ) 
-TARGET_LINK_LIBRARIES( silotest
-                       silo
-                       #${ITK_LIBRARIES}
-                     ) 
-
+#
 
 
 ##########################################################################
 # nrrd2silo
 ##########################################################################
 
-SET( nrrd2silo_SRCS
-     nrrd2silo.cc
-)
-
-#SET ( nrrd2silo_HDRS
-#     nrrd2silo.h
+#SET( nrrd2silo_SRCS
+#     nrrd2silo.cc
 #)
-
-
-ADD_EXECUTABLE( nrrd2silo 
-                ${nrrd2silo_SRCS}
-#                ${nrrd2silo_HDRS}
-				      )
-
-TARGET_LINK_LIBRARIES( nrrd2silo 
-                        silo
-                        #ITKAlgorithms
-                        #ITKBasicFilters 
-                        #ITKIONRRD 
-                        #ITKNrrdIO
-                        #ITKNumerics 
-                        #ITKCommon 
-                        ${ITK_LIBRARIES}
-                     ) 
-
+#
+##SET ( nrrd2silo_HDRS
+##     nrrd2silo.h
+##)
+#
+#
+#ADD_EXECUTABLE( nrrd2silo 
+#                ${nrrd2silo_SRCS}
+##                ${nrrd2silo_HDRS}
+#				      )
+#
+#TARGET_LINK_LIBRARIES( nrrd2silo 
+#                        silo
+#                        #ITKAlgorithms
+#                        #ITKBasicFilters 
+#                        #ITKIONRRD 
+#                        #ITKNrrdIO
+#                        #ITKNumerics 
+#                        #ITKCommon 
+#                        ${ITK_LIBRARIES}
+#                     ) 
+#
 ##########################################################################
 # Staple
 ##########################################################################
@@ -269,6 +269,26 @@ ADD_EXECUTABLE( thresholdimage
 #                        ITKBasicFilters 
 #                        ITKIO ITKNumerics ITKCommon 
 TARGET_LINK_LIBRARIES( thresholdimage 
+                       ${ITK_LIBRARIES}
+                     ) 
+
+##########################################################################
+# logical
+##########################################################################
+
+SET( logical_SRCS
+     logical.cc
+)
+
+
+ADD_EXECUTABLE( logicalimage
+                ${logical_SRCS}
+				      )
+
+#TARGET_LINK_LIBRARIES( logicalimage ITKAlgorithms
+#                        ITKBasicFilters 
+#                        ITKIO ITKNumerics ITKCommon 
+TARGET_LINK_LIBRARIES( logicalimage 
                        ${ITK_LIBRARIES}
                      ) 
 
