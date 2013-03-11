@@ -27,15 +27,15 @@
 #include <iostream>
 
 #include <itkImage.h>
+#include <itkVectorImage.h>
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
 #include <itkNumericTraits.h>
 #include <itkExceptionObject.h>
 
-template<typename T, size_t D>
-typename itk::Image<T,D>::Pointer readImage(const std::string & fn)
+template<class ImageType>
+typename ImageType::Pointer readImage(const std::string & fn)
 {
-  typedef itk::Image<T,D> ImageType;
   typedef itk::ImageFileReader< ImageType >  ReaderType;
   // read in the nrrd
   typename ReaderType::Pointer reader = ReaderType::New();
@@ -53,18 +53,16 @@ typename itk::Image<T,D>::Pointer readImage(const std::string & fn)
   return reader->GetOutput();
 }
 
-template<typename T, size_t D>
-void writeImage(const std::string & fn, typename itk::Image<T,D>::Pointer image)
+template<class ImageType>
+void writeImage(const std::string & fn, typename ImageType::Pointer image, bool uncompress)
 {
-  typedef itk::Image<T,D> ImageType;
-
   // write out the mask:
   typedef itk::ImageFileWriter< ImageType > WriterType;
   typename WriterType::Pointer writer = WriterType::New();
   writer->SetInput( image );
   writer->SetFileName( fn );
-  writer->UseCompressionOn();
-
+  if(!uncompress) 
+    writer->UseCompressionOn(); // don't uncompress == comperss
   try
   {
     writer->Update();

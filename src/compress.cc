@@ -44,12 +44,18 @@ int main(int argc, char ** argv)
 
   if( argc == 1 )
   {
-    std::cerr << "usage: " << argv[0] << " <in.nrrd> <compressed.nrrd>" << std::endl;
+    std::cerr << "usage: " << argv[0] << " <in.nrrd> <compressed.nrrd> [uncompresss-flag]" << std::endl;
     return 1;
   }
 
   std::string inputfn(argv[1]);
   std::string outputfn(argv[2]);
+  bool uncompress = false;
+  bool vector = false;
+  if(argc > 3)
+  {
+    uncompress = atoi(argv[3]) == 1;
+  }
 
   typedef itk::ImageIOBase::IOComponentType ScalarPixelType;
   itk::ImageIOBase::Pointer imageIO =
@@ -59,39 +65,71 @@ int main(int argc, char ** argv)
   imageIO->SetFileName(inputfn);
   imageIO->ReadImageInformation();
   const ScalarPixelType pixelType = imageIO->GetComponentType();
-  //const size_t dimensions = imageIO->GetNumberOfDimensions();
+  const size_t dimensions = imageIO->GetNumberOfDimensions();
+  if( imageIO->GetPixelType() == itk::ImageIOBase::VECTOR || imageIO->GetPixelType() == itk::ImageIOBase::COVARIANTVECTOR )
+    vector = true;
 
   switch (pixelType)
   {
     case itk::ImageIOBase::UCHAR:
-      writeImage<unsigned char,DIM>( outputfn, readImage<unsigned char,DIM>( inputfn ) );
+      if(vector)
+        writeImage< itk::VectorImage<unsigned char,DIM> >( outputfn, readImage< itk::VectorImage<unsigned char, DIM > >( inputfn ), uncompress );
+      else
+        writeImage< itk::Image<unsigned char,DIM> >( outputfn, readImage< itk::Image<unsigned char, DIM > >( inputfn ), uncompress );
       break;
     case itk::ImageIOBase::CHAR:
-      writeImage<char,DIM>( outputfn, readImage<char,DIM>( inputfn ) );
+      if(vector)
+        writeImage< itk::VectorImage<char,DIM> >( outputfn, readImage< itk::VectorImage<char, DIM > >( inputfn ), uncompress );
+      else
+        writeImage< itk::Image<char,DIM> >( outputfn, readImage< itk::Image<char, DIM > >( inputfn ), uncompress );
       break;
     case itk::ImageIOBase::USHORT:
-      writeImage<unsigned short,DIM>( outputfn, readImage<unsigned short,DIM>( inputfn ) );
+      if(vector)
+        writeImage< itk::VectorImage<unsigned short,DIM> >( outputfn, readImage< itk::VectorImage<unsigned short, DIM > >( inputfn ), uncompress );
+      else
+        writeImage< itk::Image<unsigned short,DIM> >( outputfn, readImage< itk::Image<unsigned short, DIM > >( inputfn ), uncompress );
       break;
     case itk::ImageIOBase::SHORT:
-      writeImage<short,DIM>( outputfn, readImage<short,DIM>( inputfn ) );
+      if(vector)
+        writeImage< itk::VectorImage<short,DIM> >( outputfn, readImage< itk::VectorImage<short, DIM > >( inputfn ), uncompress );
+      else
+        writeImage< itk::Image<short,DIM> >( outputfn, readImage< itk::Image<short, DIM > >( inputfn ), uncompress );
       break;
     case itk::ImageIOBase::UINT:
-      writeImage<unsigned int,DIM>( outputfn, readImage<unsigned int,DIM>( inputfn ) );
+      if(vector)
+        writeImage< itk::VectorImage<unsigned int,DIM> >( outputfn, readImage< itk::VectorImage<unsigned int, DIM > >( inputfn ), uncompress );
+      else
+        writeImage< itk::Image<unsigned int,DIM> >( outputfn, readImage< itk::Image<unsigned int, DIM > >( inputfn ), uncompress );
       break;
     case itk::ImageIOBase::INT:
-      writeImage<int,DIM>( outputfn, readImage<int,DIM>( inputfn ) );
+      if(vector)
+        writeImage< itk::VectorImage<int,DIM> >( outputfn, readImage< itk::VectorImage<int, DIM > >( inputfn ), uncompress );
+      else
+        writeImage< itk::Image<int,DIM> >( outputfn, readImage< itk::Image<int, DIM > >( inputfn ), uncompress );
       break;
     case itk::ImageIOBase::ULONG:
-      writeImage<unsigned long,DIM>( outputfn, readImage<unsigned long,DIM>( inputfn ) );
+      if(vector)
+        writeImage< itk::VectorImage<unsigned long,DIM> >( outputfn, readImage< itk::VectorImage<unsigned long, DIM > >( inputfn ), uncompress );
+      else
+        writeImage< itk::Image<unsigned long,DIM> >( outputfn, readImage< itk::Image<unsigned long, DIM > >( inputfn ), uncompress );
       break;
     case itk::ImageIOBase::LONG:
-      writeImage<long,DIM>( outputfn, readImage<long,DIM>( inputfn ) );
+      if(vector)
+        writeImage< itk::VectorImage<long,DIM> >( outputfn, readImage< itk::VectorImage<long, DIM > >( inputfn ), uncompress );
+      else
+        writeImage< itk::Image<long,DIM> >( outputfn, readImage< itk::Image<long, DIM > >( inputfn ), uncompress );
       break;
     case itk::ImageIOBase::FLOAT:
-      writeImage<float,DIM>( outputfn, readImage<float,DIM>( inputfn ) );
+      if(vector)
+        writeImage< itk::VectorImage<float,DIM> >( outputfn, readImage< itk::VectorImage<float, DIM > >( inputfn ), uncompress );
+      else
+        writeImage< itk::Image<float,DIM> >( outputfn, readImage< itk::Image<float, DIM > >( inputfn ), uncompress );
       break;
     case itk::ImageIOBase::DOUBLE:
-      writeImage<double,DIM>( outputfn, readImage<double,DIM>( inputfn ) );
+      if(vector)
+        writeImage< itk::VectorImage<double,DIM> >( outputfn, readImage< itk::VectorImage<double, DIM > >( inputfn ), uncompress );
+      else
+        writeImage< itk::Image<double,DIM> >( outputfn, readImage< itk::Image<double, DIM > >( inputfn ), uncompress );
       break;
 
     default:
