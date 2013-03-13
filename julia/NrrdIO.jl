@@ -35,6 +35,7 @@ type Nrrd
   kinds
   origin
   direction
+  space
   data
 end
 
@@ -44,6 +45,7 @@ function readNrrd(fn::String)
   volume = Nrrd( typeof(1.0),
                  3,
                  [0,0,0],
+                 "",
                  "",
                  "",
                  "",
@@ -124,6 +126,7 @@ function makeNrrd(numeric_type, sizes)
     volume.kinds = "domain domain domain"
     volume.direction = "(1,0,0) (0,1,0) (0,0,1)"
   end
+  volume.space = "left-posterior-superior"
   volume.origin = "(0,0,0)"
   volume.data = Array(volume.numeric_type, volume.sizes) # allocate the space
   return volume
@@ -143,6 +146,9 @@ function writeNrrd(fn::String, volume::Nrrd)
     write(f, "type: unsigned char\n" )
   end
   write(f, "dimension: $(volume.dimension)\n")
+  if length(volume.space) > 2
+    write(f, "space: $(volume.space)\n")
+  end
   sizestr = join(volume.sizes, " ")
   write(f, "sizes: $(sizestr)\n")
   if length(volume.direction) > 2
