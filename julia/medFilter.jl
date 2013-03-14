@@ -22,32 +22,39 @@
 # DEALINGS IN THE SOFTWARE.
 #
 
-# medianFilter.jl - an example of using the NrrdIO and Pmapi modules,
-#                   to do a parallel median filter.
-
-@everywhere include("medFilter.jl")
-
-using NrrdIO
-using Pmapi
-
-function medianFilter( nrrd, radius )
-  data = pmapi( x -> medFilter( nrrd.data, radius, x ), nrrd.data )
-  makeNrrd( nrrd.numeric_type, nrrd.sizes, data )
+function indToLocation( datasize, index )
+  # TODO: assuming 3D here, generalize to n-D:
+  # ind = datasize[3]*datasize[2]*i1 + datasize[3]*i2 + i3
+  # i3 "fastest index", last index is fastest in Julia..
+  ind = index-1
+  i1 = int64(floor(ind / (datasize[3]*datasize[2])))
+  tmp = ind % (datasize[3]*datasize[2])
+  i2 = int64(floor(tmp / datasize[3]))
+  i3 = tmp % datasize[3]
+  (i1+1,i2+1,i3+1)
 end
 
-function main()
-  if length(ARGS) != 3
-    println("usage: scriptname <input.nrrd> <output.nrrd> <radius>")
-    println("note: to use more than one thread, pass n > 1 to the\n-p argument when julia is invoked.")
-    return
+function medFilter( data, radius, ind )
+  datasize = size(data)
+  loc = indToLocation(datasize, ind)
+  # check if we're on the edge
+  onedge = false
+  for (i,sz) = zip(loc,datasize)
+    if i<=radius || sz-i <= radius # on edge
+      onedge = true
+      break
+    end
   end
-  in_fn::String = ARGS[1]
-  out_fn::String = ARGS[2]
-  radius::Integer = parse_int(ARGS[3])
+  # compute median filter value if not on the edge.
+  if onedge
+    return 0 # return 0 for edge cases..
+  else
+    # TODO: we assume 3D, generlize this to n-D
+    #regionSize = ntuple(length(loc), x -> 1+2*radius)
+    #section = zeros( regionSize )
 
-  in = readNrrd( in_fn )
-  out = medianFilter( in, radius )
-  writeNrrd( out_fn, out )
+    section = data[ loc[1]-radius:loc[1]+radius, loc[2]-radius:loc[2]+radius, loc[3]-radius:loc[3]+radius ]
+    return median(section)
+  end
 end
 
-main()
