@@ -40,7 +40,8 @@ export pmapi
 function pmapi(f, lst)
     np = nprocs()
     n = length(lst)
-    results = cell(n)
+    #results = cell(n)
+    results = zeros(typeof(lst[1]),size(lst))
     i = 1
     # function to produce the next work item from the queue.
     # in this case it's just an index.

@@ -28,20 +28,22 @@
 using NrrdIO
 using Pmapi
 
-function indToLocation( datasize, ind )
+function indToLocation( datasize, index )
   # TODO: assuming 3D here, generalize to n-D:
   # ind = datasize[3]*datasize[2]*i1 + datasize[3]*i2 + i3
   # i3 "fastest index", last index is fastest in Julia..
+  ind = index-1
   i1 = int64(floor(ind / (datasize[3]*datasize[2])))
   tmp = ind % (datasize[3]*datasize[2])
   i2 = int64(floor(tmp / datasize[3]))
-  i1 = tmp % datasize[3]
-  (i1,i2,i3)
+  i3 = tmp % datasize[3]
+  (i1+1,i2+1,i3+1)
 end
 
 function medFilter( data, radius, ind )
   datasize = size(data)
   loc = indToLocation(datasize, ind)
+  # check if we're on the edge
   onedge = false
   for (i,sz) = zip(loc,datasize)
     if i<=radius || sz-i <= radius # on edge
@@ -49,20 +51,22 @@ function medFilter( data, radius, ind )
       break
     end
   end
+  # compute median filter value if not on the edge.
   if onedge
     return 0 # return 0 for edge cases..
   else
     # TODO: we assume 3D, generlize this to n-D
-    #regionSize = ntuple(length(ind), x -> 1+2*radius)
+    #regionSize = ntuple(length(loc), x -> 1+2*radius)
     #section = zeros( regionSize )
 
-    section = data[ ind[1]-radius:ind[1]+radius, ind[2]-radius:ind[2]+radius, ind[3]-radius:ind[3]+radius ]
+    section = data[ loc[1]-radius:loc[1]+radius, loc[2]-radius:loc[2]+radius, loc[3]-radius:loc[3]+radius ]
     return median(section)
   end
 end
 
 function medianFilter( nrrd, radius )
-  pmapi( x -> medFilter( nrrd.data, radius, x ), nrrd.data )
+  data = pmapi( x -> medFilter( nrrd.data, radius, x ), nrrd.data )
+  makeNrrd( nrrd.numeric_type, nrrd.sizes, data )
 end
 
 function main()

@@ -108,15 +108,16 @@ function readNrrd(fn::String)
   return volume
 end
 
-# make and allocate a nrrd
-function makeNrrd(numeric_type, sizes)
+# make a nrrd from preallocated data
+function makeNrrd(numeric_type, sizes, data)
   volume = Nrrd( numeric_type,
                  length(sizes),
                  sizes,
                  "",
                  "",
                  "",
-                 "")
+                 "",
+                 data)
 
   #TODO: make this part more general - this works for the few nrrd types I use...
   if volume.dimension > 3
@@ -128,7 +129,12 @@ function makeNrrd(numeric_type, sizes)
   end
   volume.space = "left-posterior-superior"
   volume.origin = "(0,0,0)"
-  volume.data = Array(volume.numeric_type, volume.sizes) # allocate the space
+  return volume
+end
+# make and allocate a nrrd
+function makeNrrd(numeric_type, sizes)
+  data = Array(volume.numeric_type, volume.sizes) # allocate the space
+  volume = makeNrrd(numeric_type, sizes, data)
   return volume
 end
 
