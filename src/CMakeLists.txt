@@ -292,4 +292,30 @@ TARGET_LINK_LIBRARIES( logicalimage
                        ${ITK_LIBRARIES}
                      ) 
 
+##########################################################################
+# maptest
+##########################################################################
+
+SET( maptest_SRCS
+     maptest.cc
+)
+
+SET( maptest_HDRS
+     map.h
+     MapFilter.h
+     MapFilter.hxx
+     ReduceFilter.h
+     ReduceFilter.hxx
+)
+
+
+
+ADD_EXECUTABLE( maptest
+                ${maptest_SRCS}
+                ${maptest_HDRS}
+              )
+
+TARGET_LINK_LIBRARIES( maptest 
+                       ${ITK_LIBRARIES}
+                     )
 
