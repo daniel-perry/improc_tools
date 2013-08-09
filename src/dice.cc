@@ -49,6 +49,12 @@ double get_overlap(const typename ImageType::Pointer &first_image,
   typename ImageType::SizeType first_image_size = first_image->GetLargestPossibleRegion().GetSize();
   typename ImageType::SizeType second_image_size = second_image->GetLargestPossibleRegion().GetSize();
 
+  if(first_image_size != second_image_size)
+  {
+    std::cerr << "Error: sizes (" << first_image_size << " ; " << second_image_size << ") do not match." << std::endl;
+    exit(1);
+  }
+
   //std::cerr << "sizes = " << first_image_size << ", " << second_image_size << "\n";
 
   ConstIteratorType it1( first_image, first_image->GetRequestedRegion() );
@@ -59,6 +65,7 @@ double get_overlap(const typename ImageType::Pointer &first_image,
   long long num_pixels1 = 0;
   long long num_pixels2 = 0;
   long long num_overlap = 0;
+  long long num_nooverlap = 0;
 
   while (!it1.IsAtEnd()) {
     PixelType pixel1 = it1.Get();
@@ -76,11 +83,22 @@ double get_overlap(const typename ImageType::Pointer &first_image,
       num_overlap++;
     }
 
+    if (pixel1 == 0 && pixel2 == 0) {
+      num_nooverlap++;
+    }
+
     ++it1;
     ++it2;
   }
 
   //std::cerr << num_pixels1 << ", " << num_pixels2 << ", " << num_overlap << "\n";
+  long long tot_pixels = 1;
+  for(size_t i=0; i<second_image_size.GetSizeDimension(); ++i) tot_pixels *= second_image_size[i];
+
+  std::cerr << "tp: " << num_overlap << std::endl;
+  std::cerr << "fp: " << num_pixels2-num_overlap << std::endl;
+  std::cerr << "tn: " << num_nooverlap << std::endl;
+  std::cerr << "fn: " << (tot_pixels-num_pixels2) - num_nooverlap << std::endl;
 
   double overlap = (2.0 * (double)num_overlap) / (double)(num_pixels1 + num_pixels2);
 
@@ -116,11 +134,11 @@ int main(int argc, char ** argv) {
   double overlap = get_overlap<InputImageType>(images[0], images[1]);
 
   //std::cout << std::setprecision(4) << overlap << std::endl;
+  std::cerr << "dice overlap: ";
   std::cout << std::setprecision(4) << overlap;
+  std::cerr << std::endl;
 
   return 0;
 }
-
-
 
 
