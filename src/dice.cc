@@ -99,6 +99,7 @@ double get_overlap(const typename ImageType::Pointer &first_image,
   std::cerr << "fp: " << num_pixels2-num_overlap << std::endl;
   std::cerr << "tn: " << num_nooverlap << std::endl;
   std::cerr << "fn: " << (tot_pixels-num_pixels2) - num_nooverlap << std::endl;
+  std::cerr << "tot: " << tot_pixels << std::endl;
 
   double overlap = (2.0 * (double)num_overlap) / (double)(num_pixels1 + num_pixels2);
 
