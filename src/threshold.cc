@@ -42,7 +42,8 @@
 enum Operation
 {
   ABOVE,
-  BELOW
+  BELOW,
+	BETWEEN
 };
 
 /**
@@ -53,25 +54,54 @@ int main(int argc, char ** argv)
 
   if( argc == 1 )
   {
-    std::cerr << "usage: " << argv[0] << " <above|below> <threshold-value> input.nrrd output.nrrd" << std::endl;
+    std::cerr << "usage: " << argv[0] << " <above|below|between> <threshold-value,upper-threshold-value> input.nrrd output.nrrd" << std::endl;
+		std::cerr << "      NOTE: only use \"value,value\" syntax when using between.  Upper value ignored otherwise." << std::endl;
     return 1;
   }
   std::string operationstr(argv[1]);
-  float threshold = atof(argv[2]);
+	std::string thold(argv[2]);
+  float threshold = 0.f;
+	float upperthreshold = 0.f;
   std::string inputfn(argv[3]);
   std::string outputfn(argv[4]);
+
+	// parse comma separated values if needed:
+	size_t comma = thold.find(',');
+	if(comma != std::string::npos)
+	{
+		std::string first = thold.substr(0,comma);
+		std::string second = thold.substr(comma+1);
+		threshold = atof(first.c_str());
+		upperthreshold = atof(second.c_str());
+	}
+	else
+	{
+		threshold = atof(thold.c_str());
+		upperthreshold = threshold;
+	}
 
   Operation operation(ABOVE);
 
   if(operationstr == "above")
   {
     operation = ABOVE;
+		std::cout << "above " << threshold << std::endl;
   }
   else if(operationstr == "below")
   {
     operation = BELOW;
+		std::cout << "below " << threshold << std::endl;
   }
- else
+  else if(operationstr == "between")
+  {
+    operation = BETWEEN;
+		if(threshold == upperthreshold)
+		{
+			std::cerr << "Warning: between values are equivalent, results in empty mask!" << std::endl;
+		}
+		std::cout << "between " << threshold << " and " << upperthreshold << std::endl;
+	}
+  else
   {
     std::cerr << "Error: unrecognized logical operator " << operation << std::endl;
     return 1;
@@ -122,6 +152,9 @@ int main(int argc, char ** argv)
         break;
       case BELOW:
         outputIt.Set( inputIt.Get() < threshold );
+				break;
+      case BETWEEN:
+        outputIt.Set( threshold < inputIt.Get() && inputIt.Get() < upperthreshold );
         break;
     }
   }
