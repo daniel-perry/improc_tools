@@ -18,6 +18,7 @@ public:
   /** types */
   typedef TInput                  InType;
   typedef typename InType::Pointer InTypeP;
+  typedef typename InType::RegionType InRegion;
   typedef TOutput                 OutType;
   typedef typename OutType::Pointer OutTypeP;
   typedef typename OutType::RegionType OutRegion;
@@ -30,19 +31,19 @@ public:
   itkNewMacro(Self);
   itkTypeMacro(MeanFilter,  ImageToImageFilter);
 
-  void SetFunctor(FType & f) { m_functor = f; }
-  const FType & GetFunctor() const { return m_functor; }
-  FType & GetFunctor() { return m_functor; }
+  void SetFunctor(FType * f) { m_functor = f; }
+  const FType * GetFunctor() const { return m_functor; }
+  FType * GetFunctor() { return m_functor; }
+  void SetRequestedRegion( const OutRegion & outRegion ){ m_region = outRegion; }
 
 protected:
-  //virtual void BeforeThreadedGenerateData();
-  //virtual void AllocateOutputs();
+  virtual void AllocateOutputs();
   virtual void ThreadedGenerateData(const OutRegion & outputRegionForThread,
                                     itk::ThreadIdType threadId);
-  //virtual void AfterThreadedGenerateData();
 
 private:
-  FType m_functor;
+  FType * m_functor;
+  OutRegion m_region;
  
 };
 

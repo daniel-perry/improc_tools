@@ -30,9 +30,9 @@ public:
   itkNewMacro(Self);
   itkTypeMacro(MeanFilter,  ImageToImageFilter);
 
-  void SetFunctor(FType & f) { m_functor = f; }
-  const FType & GetFunctor() const { return m_functor; }
-  FType & GetFunctor() { return m_functor; }
+  void SetFunctor(FType * f) { m_functor = f; }
+  const FType * GetFunctor() const { return m_functor; }
+  FType * GetFunctor() { return m_functor; }
 
   const OutType & GetResult() const { return m_result; }
   OutType & GetResult() { return m_result; }
@@ -45,7 +45,7 @@ protected:
   virtual void AfterThreadedGenerateData();
 
 private:
-  FType m_functor;
+  FType * m_functor;
   OutList m_list;
   OutType m_result;
 };

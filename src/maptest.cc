@@ -12,19 +12,24 @@
 
 // local
 #include "map.h"
+using common::map;
+using common::reduce;
 
 template<class TIn,class TOut>
 struct MapFunctor
 {
-
-  MapFunctor()
-  {}
-
   typedef typename TIn::ConstPointer TInP;
   typedef typename TOut::Pointer TOutP;
   typedef typename TOut::RegionType OutRegion;
   typedef typename TIn::PixelType TPix;
-  void operator()(const TInP & in, TOutP & out, const OutRegion & threadRegion)
+
+	TOutP out_;
+
+  MapFunctor(TOutP out)
+	:out_(out)
+  {}
+
+  void operator()(const TInP & in, const OutRegion & threadRegion)
   {
     // trivial operation: set all pixels to be 1d mahal distance from mean.
     typedef itk::ImageRegionConstIterator<TIn> It;
@@ -49,7 +54,7 @@ struct MapFunctor
     {
       TPix diff = it.Get()-mean;
       TPix dist = std::sqrt( diff*diff*var ); // 1d mahalanobis?
-      out->SetPixel(it.GetIndex(),dist);
+      out_->SetPixel(it.GetIndex(),dist);
     }
   }
 };
@@ -108,9 +113,8 @@ int main(int argc, char * argv[])
     std::cerr << "usage: " << argv[0] << " val in.nrrd out.nrrd" << std::endl;
     return 1;
   }
-  float val = atof(argv[1]);
-  std::string infn(argv[2]);
-  std::string outfn(argv[3]);
+  std::string infn(argv[1]);
+  std::string outfn(argv[2]);
 
   typedef float PType;
   const size_t dim = 3;
@@ -123,13 +127,15 @@ int main(int argc, char * argv[])
   IType::ConstPointer in = reader->GetOutput();
 
   typedef MapFunctor<IType,IType> FType;
-  FType functor;
-  IType::Pointer out;
+  IType::Pointer out = IType::New();
+	out->SetRegions(in->GetLargestPossibleRegion());
+	out->Allocate();
+  FType functor(out);
   std::cerr << "Running Map test... " << std::endl;
   std::cerr << "running single threaded... " << std::endl;
-  map<IType,IType,FType>::run( in, out, functor , 1);
+  map<IType,IType,FType>::run( in, functor , 1);
   std::cerr << "running with 6 threads... " << std::endl;
-  map<IType,IType,FType>::run( in, out, functor , 6);
+  map<IType,IType,FType>::run( in, functor , 6);
 
   typedef itk::ImageFileWriter<IType> WType;
   WType::Pointer writer = WType::New();

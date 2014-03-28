@@ -8,11 +8,14 @@
 #include "MapFilter.h"
 #include "ReduceFilter.h"
 
+namespace common
+{
+
 /**
  * map is an abstraction of mapping over threads to simplify (and restrict) things a bit.
  *
  * the passed in functor should have an 
- *   void operator()(const TInputImage::Pointer & in, TOutputImage::Pointer & out, const TOutputImage::RegionType & threadRegion)
+ *   void operator()(TInputImage::ConstPointer in, const TOutputImage::RegionType & threadRegion)
  *
  *   with the idea of updating out with the results of the map and the functor will hold any state information you need as you go.
  */
@@ -39,17 +42,24 @@ private:
 public:
   static
   void
-  run( const InTypeP & in, OutTypeP & out, FType & functor , size_t numThreads = 1)
+  run( const InTypeP in, FType & functor , size_t numThreads = 1, OutRegion outRegion = OutRegion())
   {
-    typedef MapFilter<FType,InType,OutType> MF;
-    typename MF::Pointer mf = MF::New();
-    mf->SetFunctor(functor);
-    if(numThreads>0)
-      mf->SetNumberOfThreads(numThreads);
-    mf->SetInput(in);
-    out = mf->GetOutput();
+        typedef MapFilter<FType,InType,OutType> MF;
+        typename MF::Pointer mf = MF::New();
+        mf->SetFunctor(&functor); // handles output
+        if(numThreads>0)
+            mf->SetNumberOfThreads(numThreads);
+        mf->SetInput(in);
+        if(outRegion.GetSize()[0] > 0)
+        {
+            mf->GetOutput()->SetRequestedRegion(outRegion);
+        }
+        else
+        {
+            mf->GetOutput()->SetRequestedRegion(in->GetLargestPossibleRegion());
+        }
 
-    mf->Update(); // throws
+        mf->Update(); // throws
   }
 };
 
@@ -57,7 +67,7 @@ public:
  * reduce is an abstraction of mapping over threads to simplify (and restrict) things a bit.
  *
  * the passed in functor should have an:
- *   TOutput operator()(const TInputImage::Pointer & in, const TOutputImage::RegionType & threadRegion)
+ *   TOutput operator()(TInputImage::ConstPointer in, const TOutputImage::RegionType & threadRegion)
  *   and
  *   TOutput operator()(const std::vector<TOutput> & in)
  *
@@ -80,11 +90,11 @@ public:
 
   static
   TOutput
-  run( const InTypeP & in, TFunctor & functor , size_t numThreads = 1)
+  run( const InTypeP in, TFunctor & functor , size_t numThreads = 1)
   {
     typedef ReduceFilter<FType,InType,OutType> RF;
     typename RF::Pointer rf = RF::New();
-    rf->SetFunctor(functor);
+    rf->SetFunctor(&functor);
     if(numThreads>0)
       rf->SetNumberOfThreads(numThreads);
     rf->SetInput(in);
@@ -94,6 +104,8 @@ public:
     return rf->GetResult();
   }
 };
+
+} // end namespace
 
 
 #endif

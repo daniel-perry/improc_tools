@@ -56,7 +56,7 @@ ReduceFilter<TFunctor,TInput,TOutput>
 ::ThreadedGenerateData(const InRegion & outRegion, itk::ThreadIdType threadId)
 {
   typename InType::ConstPointer in = this->GetInput();
-  m_list[threadId] = m_functor( in, outRegion );
+  m_list[threadId] = (*m_functor)( in, outRegion );
 }
 
 template< class TFunctor,
@@ -67,7 +67,7 @@ void
 ReduceFilter<TFunctor,TInput,TOutput>
 ::AfterThreadedGenerateData()
 {
-  m_result = m_functor( m_list );
+  m_result = (*m_functor)( m_list );
 }
 
 
