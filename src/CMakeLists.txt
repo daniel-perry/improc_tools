@@ -253,6 +253,27 @@ TARGET_LINK_LIBRARIES( data_to_mask
                      ) 
 
 ##########################################################################
+# mask_data
+##########################################################################
+
+SET( MASK_DATA_SRCS
+     mask_data.cc
+)
+
+
+ADD_EXECUTABLE( mask_data
+                ${MASK_DATA_SRCS}
+				      )
+
+#TARGET_LINK_LIBRARIES( data_to_mask ITKAlgorithms
+#                        ITKBasicFilters 
+#                        ITKIO ITKNumerics ITKCommon
+TARGET_LINK_LIBRARIES( mask_data
+                       ${ITK_LIBRARIES}
+                     ) 
+
+
+##########################################################################
 # threshold
 ##########################################################################
 
