@@ -78,7 +78,7 @@ int main(int argc, char ** argv)
   {
     operation = XOR;
   }
-  else if(operationstr == "no")
+  else if(operationstr == "not")
   {
     operation = NOT;
   }
@@ -152,7 +152,7 @@ int main(int argc, char ** argv)
 
   OutImageIterator outputIt( output, output->GetLargestPossibleRegion() );
   ImageIterator input1It( input1, input1->GetLargestPossibleRegion() );
-  ImageIterator * input2It;
+  ImageIterator * input2It = 0;
   if(input2.IsNotNull())
   {
     input2It = new ImageIterator( input2, input2->GetLargestPossibleRegion() );
