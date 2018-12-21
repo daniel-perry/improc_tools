@@ -82,6 +82,11 @@ end
 
 datatype = getDatatype(meta.type);
 
+% default endian-ness is little
+if (~isfield(meta, 'endian'))
+  meta.endian = 'little';
+end
+
 % Get the size of the data.
 assert(isfield(meta, 'sizes') && ...
        isfield(meta, 'dimension') && ...
